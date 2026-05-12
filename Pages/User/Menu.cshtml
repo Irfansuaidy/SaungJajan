@@ -1,0 +1,235 @@
+@page
+@model SAUNGJAJAN.Pages.User.MenuModel
+@{
+    ViewData["Title"] = "Menu Warung";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Menu Warung</h2>
+            <p class="text-muted mb-0">Pilih warung terlebih dahulu, lalu pesan produk yang tersedia.</p>
+        </div>
+        <a asp-page="/User/LogPesanan" class="btn btn-outline-primary">Log Pesanan</a>
+        <a asp-page="/Auth/Logout" class="btn btn-outline-danger">Logout</a>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <h5 class="mb-1">Selamat datang, @Model.UserNama</h5>
+            <div class="text-muted">
+                Saldo: <strong>Rp @Model.UserSaldo.ToString("N2")</strong>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success">
+            @Model.SuccessMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form method="get">
+                <label asp-for="SelectedTokoId" class="form-label fw-semibold">Pilih Warung</label>
+
+                <select asp-for="SelectedTokoId"
+                        asp-items="Model.TokoOptions"
+                        class="form-select"
+                        onchange="this.form.submit()">
+                    <option value="">-- Pilih warung --</option>
+                </select>
+            </form>
+        </div>
+    </div>
+
+    @if (Model.SelectedTokoId == null)
+    {
+        <div class="alert alert-info">
+            Silakan pilih warung untuk melihat daftar produk.
+        </div>
+    }
+    else if (Model.ProdukList.Count == 0)
+    {
+        <div class="alert alert-warning">
+            Belum ada produk pada warung ini.
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white">
+                <h4 class="mb-0">@Model.SelectedNamaToko</h4>
+            </div>
+
+            <div class="card-body">
+                <div class="row g-3">
+                    @foreach (var produk in Model.ProdukList)
+                    {
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-1">@produk.NamaMakanan</h5>
+
+                                    <div class="mb-2">
+                                        <span class="badge bg-secondary">@produk.Jenis</span>
+                                    </div>
+
+                                    <p class="mb-1">
+                                        Harga: <strong>Rp @produk.Harga.ToString("N2")</strong>
+                                    </p>
+
+                                    <p class="mb-3">
+                                        Stok: <strong>@produk.Stok</strong>
+                                    </p>
+                                    <div class="mb-3">
+                                        <label class="form-label">Jumlah</label>
+                                        <input type="number" id="qty-@produk.IdProduk" value="1" min="1" max="@produk.Stok" class="form-control" required />
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="button" class="btn btn-primary btn-open-faktur" disabled="@(produk.Stok <= 0)" data-id-toko="@Model.SelectedTokoId" data-nama-toko="@Model.SelectedNamaToko" data-id-produk="@produk.IdProduk" data-nama-produk="@produk.NamaMakanan" data-harga="@produk.Harga.ToString(System.Globalization.CultureInfo.InvariantCulture)" data-qty-input="qty-@produk.IdProduk">
+                                            Pesan Sekarang
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="fakturModal" tabindex="-1" aria-labelledby="fakturModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="Buy">
+                <div class="modal-header" style="background:#dfeedd;">
+                    <h4 class="modal-title" id="fakturModalLabel">FAKTUR PEMESANAN</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" name="selectedTokoId" id="modalSelectedTokoId" />
+                    <input type="hidden" name="productId" id="modalProductId" />
+                    <input type="hidden" name="quantity" id="modalQuantity" />
+
+                    <div class="mb-2">Nama Pembeli : <strong>@Model.UserNama</strong></div>
+                    <div class="mb-2">Nama Toko : <strong id="modalNamaToko"></strong></div>
+                    <div class="mb-2">Waktu Pesan : <strong>@DateTime.Now.ToString("dd MMMM yyyy HH:mm", new System.Globalization.CultureInfo("id-ID"))</strong></div>
+                    <div class="mb-3">Status : <strong>Menunggu Konfirmasi</strong></div>
+
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Produk</th>
+                                <th class="text-center">Qty</th>
+                                <th class="text-end">Harga</th>
+                                <th class="text-end">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td id="modalNamaProduk"></td>
+                                <td class="text-center" id="modalQtyText"></td>
+                                <td class="text-end" id="modalHargaText"></td>
+                                <td class="text-end" id="modalSubtotalText"></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="3" class="text-end">Total Harga</th>
+                                <th class="text-end" id="modalTotalText"></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="alert alert-info mb-0">
+                        Periksa kembali pesanan Anda. Pesanan baru masuk ke log setelah tombol
+                        <strong>Konfirmasi Pembelian</strong> ditekan.
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Batal
+                    </button>
+
+                    <button type="submit" class="btn btn-primary">
+                        Konfirmasi Pembelian
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function formatRupiah(value) {
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+    }).format(value);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const buttons = document.querySelectorAll('.btn-open-faktur');
+        buttons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                const idToko = button.dataset.idToko;
+                const namaToko = button.dataset.namaToko;
+                const idProduk = button.dataset.idProduk;
+                const namaProduk = button.dataset.namaProduk;
+                const harga = parseFloat(button.dataset.harga);
+                const qtyInputId = button.dataset.qtyInput;
+                const qtyInput = document.getElementById(qtyInputId);
+
+                if (!qtyInput) {
+                    alert('Input jumlah tidak ditemukan.');
+                    return;
+                }
+
+                const qty = parseInt(qtyInput.value);
+                if (!qty || qty <= 0) {
+                    alert('Jumlah pesanan harus lebih dari 0.');
+                    return;
+                }
+
+                const maxQty = parseInt(qtyInput.getAttribute('max'));
+                if (qty > maxQty) {
+                    alert('Jumlah pesanan melebihi stok yang tersedia.');
+                    return;
+                }
+                
+                const subtotal = harga * qty;
+                document.getElementById('modalSelectedTokoId').value = idToko;
+                document.getElementById('modalProductId').value = idProduk;
+                document.getElementById('modalQuantity').value = qty;
+                document.getElementById('modalNamaToko').innerText = namaToko;
+                document.getElementById('modalNamaProduk').innerText = namaProduk;
+                document.getElementById('modalQtyText').innerText = qty;
+                document.getElementById('modalHargaText').innerText = formatRupiah(harga);
+                document.getElementById('modalSubtotalText').innerText = formatRupiah(subtotal);
+                document.getElementById('modalTotalText').innerText = formatRupiah(subtotal);
+                const fakturModalElement = document.getElementById('fakturModal');
+                const fakturModal = new bootstrap.Modal(fakturModalElement);
+                fakturModal.show();
+            });
+        });
+    });
+</script>
+    

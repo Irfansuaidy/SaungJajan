@@ -1,0 +1,185 @@
+@page
+@model SAUNGJAJAN.Pages.User_Toko.LaporanPenjualanModel
+@{
+    ViewData["Title"] = "Laporan Transaksi Penjualan";
+}
+
+<style>
+    body {
+        font-family: "Times New Roman", serif;
+        background: #f8fafc;
+    }
+
+    .laporan-box {
+        max-width: 1000px;
+        margin: 30px auto;
+        background: white;
+        border: 3px solid #222;
+    }
+
+    .laporan-header {
+        background: #dfeedd;
+        padding: 24px;
+        text-align: center;
+    }
+
+    .laporan-header h1 {
+        margin: 0;
+        font-size: 34px;
+        letter-spacing: 2px;
+        font-weight: bold;
+    }
+
+    .info {
+        padding: 28px 34px;
+        font-size: 20px;
+        line-height: 2;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 18px;
+    }
+
+    th {
+        padding: 18px;
+        border-top: 3px solid #38e038;
+        border-bottom: 3px solid #38e038;
+        text-align: center;
+        font-size: 20px;
+    }
+
+    td {
+        padding: 16px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .total-box {
+        display: flex;
+        justify-content: space-between;
+        background: #dfeedd;
+        padding: 24px 34px;
+        font-size: 24px;
+        font-weight: bold;
+        border-top: 3px solid #38e038;
+    }
+
+    .toolbar {
+        max-width: 1000px;
+        margin: 30px auto 0;
+        display: flex;
+        gap: 12px;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .btn {
+        padding: 10px 16px;
+        border: none;
+        border-radius: 8px;
+        text-decoration: none;
+        cursor: pointer;
+        font-family: Arial, sans-serif;
+    }
+
+    .btn-primary {
+        background: #2563eb;
+        color: white;
+    }
+
+    .btn-secondary {
+        background: #64748b;
+        color: white;
+    }
+
+    .filter-form {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .filter-form input {
+        padding: 9px;
+    }
+
+    @@media print {
+        .no-print {
+            display: none !important;
+        }
+
+        body {
+            background: white;
+        }
+
+        .laporan-box {
+            margin: 0;
+            max-width: 100%;
+            border: 3px solid #222;
+        }
+    }
+</style>
+
+<div class="toolbar no-print">
+    <form method="get" class="filter-form">
+        <label>Pilih Bulan:</label>
+        <input type="month" name="Bulan" value="@Model.Bulan" />
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+
+    <div>
+        <button onclick="window.print()" class="btn btn-primary">Cetak / Simpan PDF</button>
+        <a asp-page="/User_Toko/Dashboard" class="btn btn-secondary">Kembali</a>
+    </div>
+</div>
+
+<div class="laporan-box">
+    <div class="laporan-header">
+        <h1>LAPORAN TRANSAKSI PENJUALAN</h1>
+    </div>
+
+    <div class="info">
+        <div>Nama Toko &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <strong>@Model.NamaToko</strong></div>
+        <div>Periode &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <strong>@Model.PeriodeText</strong></div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>No Pesanan</th>
+                <th>Pembeli</th>
+                <th>Waktu Pesan</th>
+                <th>Total</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.LaporanList.Any())
+            {
+                <tr>
+                    <td colspan="5" style="text-align:center; padding: 40px;">
+                        Tidak ada transaksi pada periode ini.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (var item in Model.LaporanList)
+                {
+                    <tr>
+                        <td style="text-align:center;">#@item.IdPesanan</td>
+                        <td>@item.NamaPembeli</td>
+                        <td>@item.WaktuPesan.ToString("dd MMMM yyyy HH:mm", new System.Globalization.CultureInfo("id-ID"))</td>
+                        <td style="text-align:right;">Rp @item.Total.ToString("N0")</td>
+                        <td style="text-align:center;">@item.Status</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <div class="total-box">
+        <span>Total Pendapatan</span>
+        <span>Rp @Model.TotalPendapatan.ToString("N0")</span>
+    </div>
+</div>

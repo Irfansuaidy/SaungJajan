@@ -1,0 +1,166 @@
+@page
+@model SAUNGJAJAN.Pages.User.LogPesananModel
+@{
+    ViewData["Title"] = "Log Pesanan";
+}
+
+<style>
+    .page-wrap {
+        max-width: 1100px;
+        margin: 30px auto;
+        font-family: Arial, sans-serif;
+    }
+
+    .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .filter-form {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .card {
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 18px;
+        margin-bottom: 16px;
+        background: white;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 12px;
+        margin-bottom: 12px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 10px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 9px 14px;
+        border-radius: 8px;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: #2563eb;
+        color: white;
+    }
+
+    .btn-secondary {
+        background: #64748b;
+        color: white;
+    }
+
+    .badge {
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #e0f2fe;
+        color: #075985;
+        font-size: 13px;
+    }
+
+    @@media print {
+        .no-print {
+            display: none !important;
+        }
+
+        .card {
+            box-shadow: none;
+            break-inside: avoid;
+        }
+    }
+</style>
+
+<div class="page-wrap">
+    <div class="toolbar no-print">
+        <form method="get" class="filter-form">
+            <label>Pilih Bulan:</label>
+            <input type="month" name="Bulan" value="@Model.Bulan" />
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </form>
+
+        <div>
+            <button onclick="window.print()" class="btn btn-primary">Cetak / Simpan PDF</button>
+            <a asp-page="/User/Menu" class="btn btn-secondary">Kembali ke Menu</a>
+        </div>
+    </div>
+
+    <h2>Log Pesanan</h2>
+    <p>Pembeli: <strong>@Model.UserNama</strong></p>
+    <p>Periode: <strong>@Model.PeriodeText</strong></p>
+
+    @if (!Model.LogPesananList.Any())
+    {
+        <div class="card">
+            Belum ada pesanan pada periode ini.
+        </div>
+    }
+    else
+    {
+        foreach (var pesanan in Model.LogPesananList)
+        {
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h3>Faktur Pemesanan #@pesanan.IdPesanan</h3>
+                        <div>Nama Toko: <strong>@pesanan.NamaToko</strong></div>
+                        <div>Waktu Pesan: @pesanan.WaktuPesan.ToString("dd MMMM yyyy HH:mm", new System.Globalization.CultureInfo("id-ID"))</div>
+                    </div>
+
+                    <div>
+                        <span class="badge">@pesanan.Status</span>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Produk</th>
+                            <th style="text-align:center;">Qty</th>
+                            <th style="text-align:right;">Harga</th>
+                            <th style="text-align:right;">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var detail in pesanan.Detail)
+                        {
+                            <tr>
+                                <td>@detail.NamaProduk</td>
+                                <td style="text-align:center;">@detail.Quantity</td>
+                                <td style="text-align:right;">Rp @detail.Harga.ToString("N0")</td>
+                                <td style="text-align:right;">Rp @detail.Subtotal.ToString("N0")</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="3" style="text-align:right;">Total Harga</th>
+                            <th style="text-align:right;">Rp @pesanan.TotalHarga.ToString("N0")</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        }
+    }
+</div>

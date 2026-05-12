@@ -1,0 +1,83 @@
+is_global = true
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = SaungJajan
+build_property.RootNamespace = SaungJajan
+build_property.ProjectDir = /home/irfann/informatika/SaungJajan/
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 8.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = /home/irfann/informatika/SaungJajan
+build_property._RazorSourceGeneratorDebug = 
+
+[/home/irfann/informatika/SaungJajan/Pages/Auth/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQXV0aC9Mb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/irfann/informatika/SaungJajan/Pages/Auth/LoginToko.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQXV0aC9Mb2dpblRva28uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/irfann/informatika/SaungJajan/Pages/Auth/Logout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQXV0aC9Mb2dvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/irfann/informatika/SaungJajan/Pages/Auth/LogoutToko.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQXV0aC9Mb2dvdXRUb2tvLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/irfann/informatika/SaungJajan/Pages/Auth/Register.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQXV0aC9SZWdpc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/irfann/informatika/SaungJajan/Pages/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRXJyb3IuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/irfann/informatika/SaungJajan/Pages/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/irfann/informatika/SaungJajan/Pages/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUHJpdmFjeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/irfann/informatika/SaungJajan/Pages/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvU2hhcmVkL19WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/irfann/informatika/SaungJajan/Pages/User/LogPesanan.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvVXNlci9Mb2dQZXNhbmFuLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/irfann/informatika/SaungJajan/Pages/User/Menu.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvVXNlci9NZW51LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/irfann/informatika/SaungJajan/Pages/User_Toko/Dashboard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvVXNlcl9Ub2tvL0Rhc2hib2FyZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/irfann/informatika/SaungJajan/Pages/User_Toko/LaporanPenjualan.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvVXNlcl9Ub2tvL0xhcG9yYW5QZW5qdWFsYW4uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/irfann/informatika/SaungJajan/Pages/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/irfann/informatika/SaungJajan/Pages/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/irfann/informatika/SaungJajan/Pages/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvU2hhcmVkL19MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-412o1emxlu
