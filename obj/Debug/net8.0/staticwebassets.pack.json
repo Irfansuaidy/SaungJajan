@@ -13,10 +13,6 @@
       "PackagePath": "staticwebassets/favicon.ico"
     },
     {
-      "Id": "/home/irfann/informatika/SaungJajan/wwwroot/js/logPesanan.js",
-      "PackagePath": "staticwebassets/js/logPesanan.js"
-    },
-    {
       "Id": "/home/irfann/informatika/SaungJajan/wwwroot/js/site.js",
       "PackagePath": "staticwebassets/js/site.js"
     },

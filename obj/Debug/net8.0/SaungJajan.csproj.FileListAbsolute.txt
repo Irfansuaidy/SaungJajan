@@ -53,3 +53,4 @@
 /home/irfann/informatika/SaungJajan/obj/Debug/net8.0/SaungJajan.pdb
 /home/irfann/informatika/SaungJajan/obj/Debug/net8.0/SaungJajan.genruntimeconfig.cache
 /home/irfann/informatika/SaungJajan/obj/Debug/net8.0/ref/SaungJajan.dll
+/home/irfann/informatika/SaungJajan/obj/Debug/net8.0/SaungJajan.sourcelink.json

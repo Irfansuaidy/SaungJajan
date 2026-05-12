@@ -13,6 +13,7 @@ namespace SAUNGJAJAN.Data
         public DbSet<TbProduk> TbProduk { get; set; }
         public DbSet<TbPesanan> TbPesanan { get; set; }
         public DbSet<DetailPesanan> DetailPesanan { get; set; }
+        public DbSet<TbPembayaran> TbPembayaran { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -96,6 +97,53 @@ namespace SAUNGJAJAN.Data
         
                 entity.HasOne(e => e.Toko)
                     .WithMany(e => e.DetailPesanan)
+                    .HasForeignKey(e => e.IdToko);
+            });
+
+            modelBuilder.Entity<TbPembayaran>(entity =>
+            {
+                entity.ToTable("tb_pembayaran");
+                entity.HasKey(e => e.IdPembayaran);
+            
+                entity.Property(e => e.IdPembayaran)
+                    .HasColumnName("id_pembayaran")
+                    .ValueGeneratedOnAdd();
+            
+                entity.Property(e => e.IdPesanan)
+                    .HasColumnName("id_pesanan");
+            
+                entity.Property(e => e.IdUser)
+                    .HasColumnName("id_user");
+            
+                entity.Property(e => e.IdToko)
+                    .HasColumnName("id_toko");
+            
+                entity.Property(e => e.KodeKwitansi)
+                    .HasColumnName("kode_kwitansi");
+            
+                entity.Property(e => e.MetodePembayaran)
+                    .HasColumnName("metode_pembayaran");
+            
+                entity.Property(e => e.JumlahBayar)
+                    .HasColumnName("jumlah_bayar")
+                    .HasPrecision(18, 2);
+            
+                entity.Property(e => e.StatusPembayaran)
+                    .HasColumnName("status_pembayaran");
+            
+                entity.Property(e => e.WaktuBayar)
+                    .HasColumnName("waktu_bayar");
+            
+                entity.HasOne(e => e.Pesanan)
+                    .WithMany()
+                    .HasForeignKey(e => e.IdPesanan);
+            
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.IdUser);
+            
+                entity.HasOne(e => e.Toko)
+                    .WithMany()
                     .HasForeignKey(e => e.IdToko);
             });
         }

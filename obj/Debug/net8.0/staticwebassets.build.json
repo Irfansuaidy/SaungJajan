@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "L6GT1U9lx7HYWJeNk4u1MgRyzad/djw+UeJoAlj5mYQ=",
+  "Hash": "lbfMifgodLyMSI0n22aHfbYE4Xk1LDROtcp+DKA2zXo=",
   "Source": "SaungJajan",
   "BasePath": "_content/SaungJajan",
   "Mode": "Default",
@@ -91,25 +91,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/favicon.ico"
-    },
-    {
-      "Identity": "/home/irfann/informatika/SaungJajan/wwwroot/js/logPesanan.js",
-      "SourceId": "SaungJajan",
-      "SourceType": "Discovered",
-      "ContentRoot": "/home/irfann/informatika/SaungJajan/wwwroot/",
-      "BasePath": "_content/SaungJajan",
-      "RelativePath": "js/logPesanan.js",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot/js/logPesanan.js"
     },
     {
       "Identity": "/home/irfann/informatika/SaungJajan/wwwroot/js/site.js",
