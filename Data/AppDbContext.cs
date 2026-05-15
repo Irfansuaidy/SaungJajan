@@ -8,6 +8,7 @@ namespace SAUNGJAJAN.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
+        public DbSet<TbKeranjang> TbKeranjang { get; set; }
         public DbSet<TbUser> TbUser { get; set; }
         public DbSet<TbToko> TbToko { get; set; }
         public DbSet<TbProduk> TbProduk { get; set; }
@@ -131,8 +132,8 @@ namespace SAUNGJAJAN.Data
                 entity.Property(e => e.StatusPembayaran)
                     .HasColumnName("status_pembayaran");
             
-                entity.Property(e => e.WaktuBayar)
-                    .HasColumnName("waktu_bayar");
+                entity.Property(e => e.WaktuDiteruskan)
+                    .HasColumnName("waktu_diteruskan");
             
                 entity.HasOne(e => e.Pesanan)
                     .WithMany()
@@ -145,6 +146,47 @@ namespace SAUNGJAJAN.Data
                 entity.HasOne(e => e.Toko)
                     .WithMany()
                     .HasForeignKey(e => e.IdToko);
+            });
+
+            modelBuilder.Entity<TbKeranjang>(entity =>
+            {
+                entity.ToTable("tb_keranjang");
+
+                entity.HasKey(e => e.IdKeranjang);
+
+                entity.Property(e => e.IdKeranjang)
+                    .HasColumnName("id_keranjang")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.IdUser)
+                    .HasColumnName("id_user");
+
+                entity.Property(e => e.IdToko)
+                    .HasColumnName("id_toko");
+
+                entity.Property(e => e.IdProduk)
+                    .HasColumnName("id_produk");
+
+                entity.Property(e => e.Quantity)
+                    .HasColumnName("quantity");
+
+                entity.Property(e => e.WaktuDitambahkan)
+                    .HasColumnName("waktu_ditambahkan");
+
+                entity.HasIndex(e => new { e.IdUser, e.IdToko, e.IdProduk })
+                    .IsUnique();
+
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.IdUser);
+
+                entity.HasOne(e => e.Toko)
+                    .WithMany()
+                    .HasForeignKey(e => e.IdToko);
+
+                entity.HasOne(e => e.Produk)
+                    .WithMany()
+                    .HasForeignKey(e => e.IdProduk);
             });
         }
     }

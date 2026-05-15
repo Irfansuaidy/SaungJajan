@@ -62,7 +62,7 @@
             </div>
 
             <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
-                <p class="text-sm text-slate-500">Penjualan Lunas</p>
+                <p class="text-sm text-slate-500">Pendapatan Toko</p>
                 <p class="mt-2 text-2xl font-bold text-slate-900">
                     Rp @Model.TotalPenjualanToko.ToString("N0")
                 </p>
@@ -279,7 +279,7 @@
 
                                             <select name="status"
                                                     class="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
-                                                @foreach (var status in new[] { "Diproses", "Siap", "Lunas" })
+                                                @foreach (var status in new[] { "Diproses", "Siap"})
                                                 {
                                                     if (pesanan.Status == status)
                                                     {

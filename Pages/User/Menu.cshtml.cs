@@ -50,6 +50,11 @@ namespace SAUNGJAJAN.Pages.User
             return Page();
         }
 
+        private bool IsAjaxRequest()
+        {
+            return Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+        }
+
         public async Task<IActionResult> OnPostBuyAsync(int selectedTokoId, int productId, int quantity)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -268,6 +273,108 @@ namespace SAUNGJAJAN.Pages.User
             public decimal Harga { get; set; }
 
             public int Stok { get; set; }
+        }
+        public async Task<IActionResult> OnPostAddToCartAsync(int selectedTokoId, int productId, int quantity)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+        
+            if (userId == null)
+            {
+                if (IsAjaxRequest())
+                {
+                    return new JsonResult(new
+                    {
+                        success = false,
+                        message = "Sesi login sudah habis. Silakan login ulang."
+                    });
+                }
+        
+                return RedirectToPage("/Auth/Login");
+            }
+        
+            if (quantity <= 0)
+            {
+                return new JsonResult(new
+                {
+                    success = false,
+                    message = "Jumlah produk harus lebih dari 0."
+                });
+            }
+        
+            var produk = await _context.TbProduk
+                .FirstOrDefaultAsync(p =>
+                    p.IdProduk == productId &&
+                    p.IdToko == selectedTokoId);
+        
+            if (produk == null)
+            {
+                return new JsonResult(new
+                {
+                    success = false,
+                    message = "Produk tidak ditemukan."
+                });
+            }
+        
+            if (produk.Stok <= 0)
+            {
+                return new JsonResult(new
+                {
+                    success = false,
+                    message = "Stok produk habis."
+                });
+            }
+        
+            var keranjang = await _context.TbKeranjang
+                .FirstOrDefaultAsync(k =>
+                    k.IdUser == userId.Value &&
+                    k.IdToko == selectedTokoId &&
+                    k.IdProduk == productId);
+        
+            if (keranjang == null)
+            {
+                if (quantity > produk.Stok)
+                {
+                    return new JsonResult(new
+                    {
+                        success = false,
+                        message = "Jumlah melebihi stok tersedia."
+                    });
+                }
+        
+                keranjang = new TbKeranjang
+                {
+                    IdUser = userId.Value,
+                    IdToko = selectedTokoId,
+                    IdProduk = productId,
+                    Quantity = quantity,
+                    WaktuDitambahkan = DateTime.Now
+                };
+        
+                _context.TbKeranjang.Add(keranjang);
+            }
+            else
+            {
+                int totalQuantity = keranjang.Quantity + quantity;
+        
+                if (totalQuantity > produk.Stok)
+                {
+                    return new JsonResult(new
+                    {
+                        success = false,
+                        message = "Jumlah di keranjang melebihi stok tersedia."
+                    });
+                }
+        
+                keranjang.Quantity = totalQuantity;
+            }
+        
+            await _context.SaveChangesAsync();
+        
+            return new JsonResult(new
+            {
+                success = true,
+                message = "Produk berhasil ditambahkan ke keranjang."
+            });
         }
     }
 }

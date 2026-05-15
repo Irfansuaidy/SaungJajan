@@ -14,6 +14,7 @@
         </div>
         <a asp-page="/User/LogPesanan" class="btn btn-outline-primary">Log Pesanan</a>
         <a asp-page="/Auth/Logout" class="btn btn-outline-danger">Logout</a>
+        <a asp-page="/User/Keranjang" class="btn btn-outline-success">Keranjang</a>
     </div>
 
     <div class="card shadow-sm border-0 mb-4">
@@ -98,9 +99,33 @@
                                         <input type="number" id="qty-@produk.IdProduk" value="1" min="1" max="@produk.Stok" class="form-control" required />
                                     </div>
                                     <div class="d-grid">
-                                        <button type="button" class="btn btn-primary btn-open-faktur" disabled="@(produk.Stok <= 0)" data-id-toko="@Model.SelectedTokoId" data-nama-toko="@Model.SelectedNamaToko" data-id-produk="@produk.IdProduk" data-nama-produk="@produk.NamaMakanan" data-harga="@produk.Harga.ToString(System.Globalization.CultureInfo.InvariantCulture)" data-qty-input="qty-@produk.IdProduk">
-                                            Pesan Sekarang
-                                        </button>
+                                        <form method="post" asp-page-handler="AddToCart" class="add-cart-form">
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden" name="selectedTokoId" value="@Model.SelectedTokoId" />
+                                            <input type="hidden" name="productId" value="@produk.IdProduk" />
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Jumlah</label>
+                                                <input type="number"
+                                                       name="quantity"
+                                                       value="1"
+                                                       min="1"
+                                                       max="@produk.Stok"
+                                                       class="form-control"
+                                                       required />
+                                            </div>
+
+                                            <div class="d-grid">
+                                                <button type="submit"
+                                                        class="btn btn-primary"
+                                                        disabled="@(produk.Stok <= 0)">
+                                                    Tambah ke Keranjang
+                                                </button>
+                                            </div>
+
+                                            <div class="small mt-2 text-success d-none add-cart-message"></div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -178,58 +203,55 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    function formatRupiah(value) {
-    return new Intl.NumberFormat('id-ID', {
-        style: 'currency',
-        currency: 'IDR',
-        minimumFractionDigits: 0
-    }).format(value);
-    }
-
     document.addEventListener('DOMContentLoaded', function () {
-        const buttons = document.querySelectorAll('.btn-open-faktur');
-        buttons.forEach(function (button) {
-            button.addEventListener('click', function () {
-                const idToko = button.dataset.idToko;
-                const namaToko = button.dataset.namaToko;
-                const idProduk = button.dataset.idProduk;
-                const namaProduk = button.dataset.namaProduk;
-                const harga = parseFloat(button.dataset.harga);
-                const qtyInputId = button.dataset.qtyInput;
-                const qtyInput = document.getElementById(qtyInputId);
+        const forms = document.querySelectorAll('.add-cart-form');
 
-                if (!qtyInput) {
-                    alert('Input jumlah tidak ditemukan.');
-                    return;
-                }
+        forms.forEach(function (form) {
+            form.addEventListener('submit', async function (event) {
+                event.preventDefault();
 
-                const qty = parseInt(qtyInput.value);
-                if (!qty || qty <= 0) {
-                    alert('Jumlah pesanan harus lebih dari 0.');
-                    return;
-                }
+                const button = form.querySelector('button[type="submit"]');
+                const message = form.querySelector('.add-cart-message');
 
-                const maxQty = parseInt(qtyInput.getAttribute('max'));
-                if (qty > maxQty) {
-                    alert('Jumlah pesanan melebihi stok yang tersedia.');
-                    return;
+                button.disabled = true;
+                const oldText = button.innerText;
+                button.innerText = 'Menambahkan...';
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: new FormData(form),
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    message.classList.remove('d-none', 'text-danger', 'text-success');
+                    message.classList.add(result.success ? 'text-success' : 'text-danger');
+                    message.innerText = result.message;
+
+                    if (result.success) {
+                        button.innerText = 'Berhasil Ditambahkan';
+
+                        setTimeout(function () {
+                            button.innerText = oldText;
+                            button.disabled = false;
+                        }, 900);
+                    } else {
+                        button.innerText = oldText;
+                        button.disabled = false;
+                    }
+                } catch {
+                    message.classList.remove('d-none', 'text-success');
+                    message.classList.add('text-danger');
+                    message.innerText = 'Gagal menambahkan produk ke keranjang.';
+
+                    button.innerText = oldText;
+                    button.disabled = false;
                 }
-                
-                const subtotal = harga * qty;
-                document.getElementById('modalSelectedTokoId').value = idToko;
-                document.getElementById('modalProductId').value = idProduk;
-                document.getElementById('modalQuantity').value = qty;
-                document.getElementById('modalNamaToko').innerText = namaToko;
-                document.getElementById('modalNamaProduk').innerText = namaProduk;
-                document.getElementById('modalQtyText').innerText = qty;
-                document.getElementById('modalHargaText').innerText = formatRupiah(harga);
-                document.getElementById('modalSubtotalText').innerText = formatRupiah(subtotal);
-                document.getElementById('modalTotalText').innerText = formatRupiah(subtotal);
-                const fakturModalElement = document.getElementById('fakturModal');
-                const fakturModal = new bootstrap.Modal(fakturModalElement);
-                fakturModal.show();
             });
         });
     });
 </script>
-    

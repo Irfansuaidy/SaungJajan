@@ -29,10 +29,10 @@ namespace SAUNGJAJAN.Models
         public decimal JumlahBayar { get; set; }
 
         [Column("status_pembayaran")]
-        public string StatusPembayaran { get; set; } = "Berhasil";
+        public string StatusPembayaran { get; set; } = "Ditahan";
 
-        [Column("waktu_bayar")]
-        public DateTime WaktuBayar { get; set; }
+        [Column("waktu_diteruskan")]
+        public DateTime WaktuDiteruskan { get; set; }
 
         public TbPesanan? Pesanan { get; set; }
 

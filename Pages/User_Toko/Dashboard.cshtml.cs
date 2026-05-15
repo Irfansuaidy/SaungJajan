@@ -260,7 +260,7 @@ namespace SAUNGJAJAN.Pages.User_Toko
                 return RedirectToPage("/Auth/LoginToko");
             }
 
-            var daftarStatus = new[] { "Diproses", "Siap", "Dibatalkan", "Lunas" };
+            var daftarStatus = new[] { "Diproses", "Siap", "Dibatalkan" };
 
             if (string.IsNullOrWhiteSpace(status) || !daftarStatus.Contains(status))
             {
@@ -295,6 +295,74 @@ namespace SAUNGJAJAN.Pages.User_Toko
                 return RedirectToPage();
             }
 
+            if (statusLama.Equals("Siap", StringComparison.OrdinalIgnoreCase) &&
+                statusBaru.Equals("Dibatalkan", StringComparison.OrdinalIgnoreCase))
+            {
+                ErrorMessage = "Pesanan yang sudah siap tidak bisa dibatalkan.";
+                return RedirectToPage();
+            }
+
+            var pembayaran = await _context.TbPembayaran
+                .FirstOrDefaultAsync(p => p.IdPesanan == idPesanan);
+
+            if (pembayaran == null)
+            {
+                ErrorMessage = "Data pembayaran tidak ditemukan.";
+                return RedirectToPage();
+            }
+
+            if (statusBaru.Equals("Siap", StringComparison.OrdinalIgnoreCase))
+            {
+                if (pembayaran.StatusPembayaran.Equals("Ditahan", StringComparison.OrdinalIgnoreCase))
+                {
+                    var toko = await _context.TbToko
+                        .FirstOrDefaultAsync(t => t.IdToko == pembayaran.IdToko);
+
+                    if (toko == null)
+                    {
+                        ErrorMessage = "Data toko tidak ditemukan.";
+                        return RedirectToPage();
+                    }
+
+                    toko.Pemasukan += pembayaran.JumlahBayar;
+                    pembayaran.StatusPembayaran = "Diteruskan";
+                    pembayaran.WaktuDiteruskan = DateTime.Now;
+                }
+            }
+
+            if (statusBaru.Equals("Dibatalkan", StringComparison.OrdinalIgnoreCase))
+            {
+                if (pembayaran.StatusPembayaran.Equals("Ditahan", StringComparison.OrdinalIgnoreCase))
+                {
+                    var user = await _context.TbUser
+                        .FirstOrDefaultAsync(u => u.IdUser == pembayaran.IdUser);
+
+                    if (user == null)
+                    {
+                        ErrorMessage = "Data user tidak ditemukan.";
+                        return RedirectToPage();
+                    }
+
+                    user.Saldo += pembayaran.JumlahBayar;
+                    pembayaran.StatusPembayaran = "Refund";
+
+                    var detailList = await _context.DetailPesanan
+                        .Where(d => d.IdPesanan == idPesanan)
+                        .ToListAsync();
+
+                    foreach (var detail in detailList)
+                    {
+                        var produk = await _context.TbProduk
+                            .FirstOrDefaultAsync(p => p.IdProduk == detail.IdProduk);
+
+                        if (produk != null)
+                        {
+                            produk.Stok += detail.Quantity;
+                        }
+                    }
+                }
+            }
+
             pesanan.Status = statusBaru;
 
             await _context.SaveChangesAsync();
@@ -303,7 +371,6 @@ namespace SAUNGJAJAN.Pages.User_Toko
 
             return RedirectToPage();
         }
-
         private async Task LoadDashboardAsync(int idToko)
         {
             Toko = await _context.TbToko
@@ -381,9 +448,7 @@ namespace SAUNGJAJAN.Pages.User_Toko
             TotalStok = ProdukList.Sum(p => p.Stok);
             TotalPesanan = PesananList.Count;
 
-            TotalPenjualanToko = PesananList
-                .Where(p => p.Status.Equals("Lunas", StringComparison.OrdinalIgnoreCase))
-                .Sum(p => p.TotalHargaToko);
+            TotalPenjualanToko = Toko.Pemasukan;
         }
 
         private int? GetCurrentTokoId()

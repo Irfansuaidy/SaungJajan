@@ -90,6 +90,31 @@
             break-inside: avoid;
         }
     }
+
+    .status-info {
+        margin-top: 14px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+    .status-diproses {
+        background: #f1f5f9;
+        color: #334155;
+    }
+    .status-siap {
+        background: #dcfce7;
+        color: #166534;
+    }
+    .status-batal {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+    .action-row {
+        margin-top: 14px;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
 </style>
 
 <div class="page-wrap">
@@ -123,7 +148,7 @@
             <div class="card">
                 <div class="card-header">
                     <div>
-                        <h3>Faktur Pemesanan #@pesanan.IdPesanan</h3>
+                        <h3>Riwayat Pemesanan #@pesanan.IdPesanan</h3>
                         <div>Nama Toko: <strong>@pesanan.NamaToko</strong></div>
                         <div>Waktu Pesan: @pesanan.WaktuPesan.ToString("dd MMMM yyyy HH:mm", new System.Globalization.CultureInfo("id-ID"))</div>
                     </div>
@@ -160,6 +185,32 @@
                         </tr>
                     </tfoot>
                 </table>
+                @if (pesanan.Status.Equals("Diproses", StringComparison.OrdinalIgnoreCase))
+                {
+                    <div class="status-info status-diproses">
+                        Pesanan sedang diproses oleh toko. Saldo Anda sudah dipotong saat checkout, tetapi dana masih ditahan oleh sistem.
+                    </div>
+                }
+                else if (pesanan.Status.Equals("Siap", StringComparison.OrdinalIgnoreCase))
+                {
+                    <div class="status-info status-siap">
+                        Pesanan sudah siap. Silakan datang ke toko untuk mengambil pesanan.
+                    </div>
+                
+                    <div class="action-row no-print">
+                        <a asp-page="/User/Kwitansi"
+                           asp-route-idPesanan="@pesanan.IdPesanan"
+                           class="btn btn-primary">
+                            Cetak Kwitansi
+                        </a>
+                    </div>
+                }
+                else if (pesanan.Status.Equals("Dibatalkan", StringComparison.OrdinalIgnoreCase))
+                {
+                    <div class="status-info status-batal">
+                        Pesanan dibatalkan. Jika dana masih ditahan, saldo dikembalikan ke akun pembeli.
+                    </div>
+                }
             </div>
         }
     }
